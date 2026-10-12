@@ -9,18 +9,13 @@ jobs:
          - name: Checkout Repo
            uses: actions/checkout@v7
                   
-         - name: List and Read file
+         - name: List repository files
            run: |
-             echo "My first Github Actions Job"
+             echo "List repo files"
              ls -ltra
-             cat README.md
 
-         - name: Generate ASCII Artwork
-           run: |
-             sudo apt-get update
-             sudo apt-get install -y cowsay
-             /usr/games/cowsay -f dragon "Run for cover, I am a dragon....RAWR" >> dragon.txt
-             cat dragon.txt
+         - name: Executing shell script
+           run: bash .github/workflows/ascii-script.sh
 
          # - name: List files
          #   run: ls
