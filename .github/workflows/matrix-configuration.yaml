@@ -7,9 +7,22 @@ on:
 jobs:
   deploy:
     strategy:
+        fail-fast: false
+        max-parallel: 3
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest]
         image: [hello-world, alpine, busybox]
+        exclude:
+          - os: windows-latest
+            image: hello-world
+          - os: windows-latest
+            image: alpine
+          - os: windows-latest
+            image: busybox
+        include:
+          - os: ubuntu-latest
+            image: nginx:alpine
+          
     runs-on: ${{ matrix.os }}
     steps:
       - name: Show OS and Docker details
@@ -25,5 +38,10 @@ jobs:
           docker image pull "${{ matrix.image }}"
           docker image inspect "${{ matrix.image }}" --format 'ID={{.Id}} OS={{.Os}} ARCH={{.Architecture}} DIGESTS={{json .RepoDigests}}'
 
-      - name: Run container image
+      - name: Run hello-world image
+        if: matrix.image == 'hello-world'
         run: docker run --rm "${{ matrix.image }}"
+
+      - name: Run Alpine or BusyBox image
+        if: matrix.image != 'hello-world'
+        run: docker run --rm "${{ matrix.image }}" echo "${{ matrix.image }} ran successfully"
