@@ -5,17 +5,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy
+  deploy:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, ubuntu-20.0.4]
-        images: [hello-world, alpine, busybox]
+        os: [ubuntu-latest, windows-latest]
+        image: [hello-world, alpine, busybox]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Echo Docker Details
-        run: docker info
+      - name: Show OS and Docker details
+        run: |
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Runner label: ${{ matrix.os }}"
+          echo "Container image: ${{ matrix.image }}"
+          docker --version
+          docker info
 
-      - name: Run Images
-        run: docker run ${{ matrix.images }} echo "Hello from ${{ matrix.images }} on ${{ matrix.os }}"
+      - name: Inspect container image
+        run: |
+          docker image pull "${{ matrix.image }}"
+          docker image inspect "${{ matrix.image }}" --format 'ID={{.Id}} OS={{.Os}} ARCH={{.Architecture}} DIGESTS={{json .RepoDigests}}'
 
-  
+      - name: Run container image
+        run: docker run --rm "${{ matrix.image }}"
