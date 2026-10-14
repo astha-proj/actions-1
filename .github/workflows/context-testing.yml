@@ -43,4 +43,5 @@ jobs:
       - name: Check secret context
         env:
           HAS_EXAMPLE_SECRET: ${{ secrets.EXAMPLE_SECRET != '' }}
-        run: echo "EXAMPLE_SECRET configured: $HAS_EXAMPLE_SECRET"
+        run: |
+          echo "EXAMPLE_SECRET configured: $HAS_EXAMPLE_SECRET"
